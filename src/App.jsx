@@ -1,18 +1,18 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ShoppingListOverview from './pages/ShoppingListOverview';
-import ShoppingListDetail from './pages/ShoppingListDetail';
+import { AuthProvider } from './context/AuthContext';
+import ShoppingListsPage from './pages/ShoppingListsPage';
+import ShoppingListDetailPage from './pages/ShoppingListDetailPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="app">
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ShoppingListOverview />} />
-          <Route path="/shopping-lists/:id" element={<ShoppingListDetail />} />
+          <Route path="/" element={<ShoppingListsPage />} />
+          <Route path="/list/:id" element={<ShoppingListDetailPage />} />
         </Routes>
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
