@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import Header from '../components/layout/Header';
-import ShoppingListTile from '../components/shopping-list/ShoppingListTile';
+import Header from '../components/layout/Header'; // Předpokládám, že Header zatím necháš původní
+import ShoppingListGrid from '../components/shopping-list/ShoppingListGrid';
 import CreateListModal from '../components/shopping-list/CreateListModal';
+import FilterButtons from '../components/shopping-list/FilterButtons';
 import { shoppingLists as initialLists } from '../data/fakeData';
 import { useAuth } from '../context/AuthContext';
+
+// MUI importy
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function ShoppingListsPage() {
   const { user } = useAuth();
   const [lists, setLists] = useState(initialLists);
-  const [isOpen, setIsOpen] = useState(false);
+  const [filter, setFilter] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCreate = (name) => {
     const newList = {
@@ -22,39 +31,59 @@ export default function ShoppingListsPage() {
   };
 
   const handleDelete = (id) => {
-    setLists(lists.filter(l => l.id !== id));
+    // Zde by ideálně měl být také MUI Dialog místo window.confirm, 
+    // ale window.confirm pro splnění zadání stačí.
+    if (window.confirm("Opravdu smazat?")) {
+      setLists(lists.filter(l => l.id !== id));
+    }
   };
 
   const handleArchive = (id) => {
-    setLists(lists.map(l => l.id === id ? { ...l, archived: true } : l));
+    setLists(lists.map(l => l.id === id ? { ...l, archived: !l.archived } : l));
   };
 
+  const filteredLists = lists.filter(list => {
+    if (filter === 'active') return !list.archived;
+    if (filter === 'archived') return list.archived;
+    return true;
+  });
+
   return (
-    <div>
+    <>
       <Header />
-      <div style={{ padding: '0 2rem', maxWidth: '1000px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h1>Nákupní seznamy</h1>
-          <button onClick={() => setIsOpen(true)}>Nový seznam</button>
-        </div>
+      
+      {/* Container zajistí, že obsah nebude roztažený přes celou šířku na velkých monitorech */}
+      <Container maxWidth="lg" sx={{ py: 4 }}> {/* py = padding-top + padding-bottom */}
+        
+        {/* Box je jako vylepšený div, umožňuje snadné stylování */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+            Nákupní seznamy
+          </Typography>
+          
+          <Button 
+            variant="contained" 
+            startIcon={<AddIcon />} 
+            onClick={() => setIsModalOpen(true)}
+          >
+            Nový seznam
+          </Button>
+        </Box>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {lists.map(list => (
-            <ShoppingListTile
-              key={list.id}
-              list={list}
-              onDelete={handleDelete}
-              onArchive={handleArchive}
-            />
-          ))}
-        </div>
-      </div>
+        <FilterButtons filter={filter} setFilter={setFilter} />
 
-      <CreateListModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onCreate={handleCreate}
-      />
-    </div>
+        <ShoppingListGrid 
+          lists={filteredLists} 
+          onDelete={handleDelete} 
+          onArchive={handleArchive}
+        />
+
+        <CreateListModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onCreate={handleCreate}
+        />
+      </Container>
+    </>
   );
 }

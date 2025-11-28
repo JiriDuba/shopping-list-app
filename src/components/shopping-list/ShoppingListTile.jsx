@@ -1,49 +1,62 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import Button from '../common/Button';
+// Importujeme MUI komponenty
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton'; // Tlačítko, které je jen ikona
+import DeleteIcon from '@mui/icons-material/Delete'; // Ikona koše
+import ArchiveIcon from '@mui/icons-material/Archive'; // Ikona archivu
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 
 export default function ShoppingListTile({ list, onDelete, onArchive }) {
   const { user } = useAuth();
   const isOwner = list.owner === user;
 
   return (
-    <div style={{
-      border: '1px solid #ddd',
-      borderRadius: '12px',
-      padding: '1rem',
-      margin: '0.5rem',
-      position: 'relative',
-      background: '#fff'
+    <Card sx={{ 
+      maxWidth: 345, 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      bgcolor: list.archived ? '#f5f5f5' : 'white' // Barva pozadí přes sx prop
     }}>
-      <Link to={`/list/${list.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          <div style={{
-            width: '60px', height: '60px', background: '#eee', borderRadius: '8px',
-            margin: '0 auto 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            [Photo]
-          </div>
-          <h3 style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>{list.name}</h3>
-        </div>
-        <div style={{
-          padding: '0.5rem 1rem',
-          background: '#f5f5f5',
-          borderRadius: '8px',
-          fontSize: '0.9rem',
-          color: '#666'
-        }}>
-          Vlastník: {list.owner} | Členů: {list.members.length}
-        </div>
+      {/* Klikatelná oblast vedoucí na detail */}
+      <Link to={`/list/${list.id}`} style={{ textDecoration: 'none', color: 'inherit', flexGrow: 1 }}>
+        <CardContent>
+          <Typography variant="h5" component="div" gutterBottom align="center">
+            {list.name}
+          </Typography>
+          
+          <Typography variant="body2" color="text.secondary" align="center">
+            {list.archived ? 'Archivováno' : `${list.members.length} členů`}
+          </Typography>
+        </CardContent>
       </Link>
 
+      {/* Ovládací tlačítka */}
       {isOwner && (
-        <div style={{ marginTop: '1rem', textAlign: 'right' }}>
-          <Button variant="danger" onClick={() => onDelete(list.id)}>Del</Button>
-          {!list.archived && (
-            <Button onClick={() => onArchive(list.id)}>Archive</Button>
-          )}
-        </div>
+        <CardActions disableSpacing sx={{ justifyContent: 'flex-end' }}>
+          {/* Tooltip zobrazí bublinu s popisem po najetí myši */}
+          <IconButton 
+            onClick={() => onArchive(list.id)} 
+            color="primary"
+            aria-label="archive"
+          >
+             {list.archived ? <UnarchiveIcon /> : <ArchiveIcon />}
+          </IconButton>
+
+          <IconButton 
+            onClick={() => onDelete(list.id)} 
+            color="error" 
+            aria-label="delete"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import Button from '../common/Button';
 import AddMemberModal from './AddMemberModal';
 import { useAuth } from '../../context/AuthContext';
+// MUI Importy
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Chip from '@mui/material/Chip';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function MembersSection({ list, onUpdate }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -9,7 +16,14 @@ export default function MembersSection({ list, onUpdate }) {
   const isOwner = list.owner === user;
 
   const handleRemove = (username) => {
-    if (username === user || (isOwner && window.confirm(`Odebrat ${username}?`))) {
+    // Vlastník nemůže odebrat sám sebe, leda by list patřil jinému uživateli (ale to je ošetřeno logikou)
+    if (username === list.owner) {
+      alert("Vlastník nemůže opustit ani být odebrán ze seznamu.");
+      return;
+    }
+    
+    // Umožnit odebrat sobě (opustit) nebo vlastníkovi odebrat jiné
+    if (username === user || (isOwner && window.confirm(`Opravdu odebrat člena ${username}?`))) {
       onUpdate({
         ...list,
         members: list.members.filter(m => m !== username)
@@ -25,36 +39,37 @@ export default function MembersSection({ list, onUpdate }) {
   };
 
   return (
-    <div style={{ margin: '2rem 0', padding: '1rem', background: '#f9f9f9', borderRadius: '12px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3>Členové ({list.members.length})</h3>
-        {isOwner && <Button onClick={() => setModalOpen(true)}>+ Přidat člena</Button>}
-      </div>
+    <Box sx={{ mb: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: '12px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6" component="h3">
+          Členové ({list.members.length})
+        </Typography>
+        {isOwner && (
+          <Button 
+            onClick={() => setModalOpen(true)} 
+            variant="contained" 
+            startIcon={<PersonAddIcon />}
+            size="small"
+          >
+            Přidat člena
+          </Button>
+        )}
+      </Box>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+      <Grid container spacing={1}>
         {list.members.map(member => (
-          <div key={member} style={{
-            padding: '1rem',
-            background: 'white',
-            borderRadius: '8px',
-            textAlign: 'center',
-            position: 'relative',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ fontWeight: member === list.owner ? 'bold' : 'normal' }}>
-              {member} {member === list.owner && '(vlastník)'}
-            </div>
-            {(isOwner || member === user) && member !== list.owner && (
-              <button
-                onClick={() => handleRemove(member)}
-                style={{ position: 'absolute', top: '4px', right: '4px', background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }}
-              >
-                X
-              </button>
-            )}
-          </div>
+          <Grid item key={member}>
+            <Chip
+              label={`${member} ${member === list.owner ? '(vlastník)' : ''}`}
+              // Pouze vlastník seznamu nebo sám člen (pokud není vlastník) se může odebrat
+              onDelete={(isOwner || member === user) && member !== list.owner ? () => handleRemove(member) : undefined}
+              deleteIcon={(isOwner || member === user) && member !== list.owner ? <CloseIcon /> : undefined}
+              color={member === list.owner ? 'primary' : 'default'}
+              variant={member === list.owner ? 'filled' : 'outlined'}
+            />
+          </Grid>
         ))}
-      </div>
+      </Grid>
 
       <AddMemberModal
         isOpen={modalOpen}
@@ -62,6 +77,6 @@ export default function MembersSection({ list, onUpdate }) {
         onAdd={handleAdd}
         currentMembers={list.members}
       />
-    </div>
+    </Box>
   );
 }

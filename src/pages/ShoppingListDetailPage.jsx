@@ -9,6 +9,14 @@ import ItemsList from '../components/list-detail/ItemsList';
 import { shoppingLists as initialLists, listItems } from '../data/fakeData';
 import { useAuth } from '../context/AuthContext';
 
+// --- MUI Importy ---
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+// -------------------
+
 export default function ShoppingListDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -28,12 +36,33 @@ export default function ShoppingListDetailPage() {
     });
 
   useEffect(() => {
-    if (!list || !list.members.includes(user)) {
+    if (list && !list.members.includes(user)) {
       navigate('/');
     }
   }, [list, user, navigate]);
 
-  if (!list) return <div>Načítání...</div>;
+  // --- MUI pro stav Načítání / Nenalezeno ---
+  if (!list) {
+    return (
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100vh' 
+        }}
+      >
+        <CircularProgress sx={{ mb: 2 }} />
+        <Typography variant="h6">Načítání seznamu...</Typography>
+        {/* Přidal jsem Alert pro lepší uživatelský feedback */}
+        <Alert severity="warning" sx={{ mt: 2 }}>
+            Pokud se seznam nenačte, budete automaticky přesměrováni.
+        </Alert>
+      </Box>
+    );
+  }
+  // -------------------------------------------
 
   const updateList = (updatedList) => {
     setLists(lists.map(l => l.id === updatedList.id ? updatedList : l));
@@ -60,26 +89,50 @@ export default function ShoppingListDetailPage() {
   };
 
   return (
-    <div>
+    <>
       <Header />
-      <div style={{ padding: '0 2rem', maxWidth: '1000px', margin: '0 auto' }}>
-        <ListTitleEditable list={list} onUpdate={updateList} />
+      
+      {/* MUI Container pro centrování a max. šířku */}
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        
+        {/* Titul a info o vlastníkovi */}
+        <Box sx={{ mb: 3 }}>
+            <ListTitleEditable list={list} onUpdate={updateList} /> 
 
-        <div style={{ color: '#666', marginBottom: '1rem' }}>
-          Vlastník: <strong>{list.owner}</strong>
-        </div>
+            {/* Typography nahrazuje div s inline stylem */}
+            <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 1 }}>
+                Vlastník: <Typography component="strong" variant="inherit" sx={{ fontWeight: 'bold' }}>{list.owner}</Typography>
+            </Typography>
+        </Box>
 
-        <MembersSection list={list} onUpdate={updateList} />
+        {/* Sekce pro členy - s Box pro vizuální oddělení */}
+        <Box sx={{ mb: 4, p: 2, border: '1px solid #ddd', borderRadius: '8px' }}>
+            <MembersSection list={list} onUpdate={updateList} />
+        </Box>
 
-        <h2 style={{ margin: '2rem 0 1rem' }}>Položky</h2>
-        <ItemFilters filter={filter} setFilter={setFilter} />
-        <AddItemInput onAdd={addItem} />
-        <ItemsList
-          items={listItemsFiltered}
-          onToggle={toggleItem}
-          onDelete={deleteItem}
-        />
-      </div>
-    </div>
+        {/* Sekce pro položky */}
+        <Box>
+            {/* Typography nahrazuje h2 */}
+            <Typography variant="h5" component="h2" sx={{ mb: 2, borderBottom: '1px solid #eee', pb: 1 }}>
+                Položky
+            </Typography>
+
+            {/* Filtry a vstup pro přidání položek */}
+            <Box sx={{ mb: 2 }}>
+                <ItemFilters filter={filter} setFilter={setFilter} />
+            </Box>
+
+            <AddItemInput onAdd={addItem} />
+            
+            <Box sx={{ mt: 3 }}>
+                <ItemsList
+                    items={listItemsFiltered}
+                    onToggle={toggleItem}
+                    onDelete={deleteItem}
+                />
+            </Box>
+        </Box>
+      </Container>
+    </>
   );
 }

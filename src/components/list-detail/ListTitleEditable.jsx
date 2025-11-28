@@ -1,5 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+// MUI Importy
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
+import Box from '@mui/material/Box';
 
 export default function ListTitleEditable({ list, onUpdate }) {
   const [editing, setEditing] = useState(false);
@@ -14,29 +22,50 @@ export default function ListTitleEditable({ list, onUpdate }) {
     setEditing(false);
   };
 
-  if (!isOwner) return <h1 style={{ margin: '1rem 0' }}>{list.name}</h1>;
+  // Není vlastník: zobrazíme jen název
+  if (!isOwner) {
+    return (
+      <Typography variant="h3" component="h1" sx={{ margin: '1rem 0' }}>
+        {list.name}
+      </Typography>
+    );
+  }
 
+  // Vlastník: zobrazení pro editaci / prohlížení
   return (
-    <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <Box sx={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: 2 }}>
       {editing ? (
         <>
-          <input
-            type="text"
+          <TextField
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
             autoFocus
-            style={{ fontSize: '2rem', padding: '8px', width: '400px' }}
+            fullWidth
+            variant="standard"
+            inputProps={{ style: { fontSize: '2rem', padding: '4px 0' } }}
           />
-          <button onClick={handleSave}>Save</button>
-          <button onClick={() => { setName(list.name); setEditing(false); }}>Cancel</button>
+          <IconButton onClick={handleSave} color="primary" aria-label="uložit">
+            <SaveIcon />
+          </IconButton>
+          <IconButton 
+            onClick={() => { setName(list.name); setEditing(false); }} 
+            color="error"
+            aria-label="zrušit"
+          >
+            <CloseIcon />
+          </IconButton>
         </>
       ) : (
         <>
-          <h1 style={{ margin: 0 }}>{list.name}</h1>
-          <button onClick={() => setEditing(true)}>Edit</button>
+          <Typography variant="h3" component="h1" sx={{ margin: 0 }}>
+            {list.name}
+          </Typography>
+          <IconButton onClick={() => setEditing(true)} aria-label="editovat" size="small">
+            <EditIcon />
+          </IconButton>
         </>
       )}
-    </div>
+    </Box>
   );
 }

@@ -1,17 +1,27 @@
-import Button from '../common/Button';
+// Zde si všimni, že jsme smazali import původní Button komponenty
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 export default function FilterButtons({ filter, setFilter }) {
+  const handleChange = (event, newFilter) => {
+    if (newFilter !== null) {
+      setFilter(newFilter);
+    }
+  };
+
   return (
-    <div style={{ margin: '1rem 0' }}>
-      <Button variant={filter === 'all' ? 'primary' : ''} onClick={() => setFilter('all')}>
-        All
-      </Button>
-      <Button variant={filter === 'active' ? 'primary' : ''} onClick={() => setFilter('active')}>
-        Active
-      </Button>
-      <Button variant={filter === 'archived' ? 'primary' : ''} onClick={() => setFilter('archived')}>
-        Archived
-      </Button>
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+      <ToggleButtonGroup
+        color="primary"
+        value={filter}
+        exclusive
+        onChange={handleChange}
+        aria-label="Filter shopping lists"
+      >
+        <ToggleButton value="all">Vše</ToggleButton>
+        <ToggleButton value="active">Aktivní</ToggleButton>
+        <ToggleButton value="archived">Archiv</ToggleButton>
+      </ToggleButtonGroup>
     </div>
   );
 }

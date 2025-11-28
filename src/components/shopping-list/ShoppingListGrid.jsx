@@ -1,21 +1,30 @@
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import ShoppingListTile from './ShoppingListTile';
 
 export default function ShoppingListGrid({ lists, onDelete, onArchive }) {
+  if (!lists || lists.length === 0) {
+    return (
+      <Typography variant="body1" color="text.secondary" sx={{ mt: 4, textAlign: 'center' }}>
+        Zatím nemáte žádné seznamy.
+      </Typography>
+    );
+  }
+
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-      gap: '1rem',
-      marginTop: '2rem'
-    }}>
+    // Grid container drží položky pohromadě
+    // spacing={3} znamená mezeru 24px mezi dlaždicemi
+    <Grid container spacing={3}>
       {lists.map(list => (
-        <ShoppingListTile
-          key={list.id}
-          list={list}
-          onDelete={onDelete}
-          onArchive={onArchive}
-        />
+        // Grid item je obal pro jednu dlaždici
+        <Grid item key={list.id} xs={12} sm={6} md={4}>
+          <ShoppingListTile
+            list={list}
+            onDelete={onDelete}
+            onArchive={onArchive}
+          />
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 }

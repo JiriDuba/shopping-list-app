@@ -1,11 +1,27 @@
-import Button from '../common/Button';
+// Stejná logika jako FilterButtons.jsx, jen jiné názvy hodnot
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 export default function ItemFilters({ filter, setFilter }) {
+  const handleChange = (event, newFilter) => {
+    if (newFilter !== null) {
+      setFilter(newFilter);
+    }
+  };
+
   return (
-    <div style={{ margin: '1rem 0', display: 'flex', gap: '1rem' }}>
-      <Button variant={filter === 'all' ? 'primary' : ''} onClick={() => setFilter('all')}>All</Button>
-      <Button variant={filter === 'buy' ? 'primary' : ''} onClick={() => setFilter('buy')}>Buy</Button>
-      <Button variant={filter === 'resolved' ? 'primary' : ''} onClick={() => setFilter('resolved')}>Resolved</Button>
+    <div style={{ margin: '1rem 0' }}>
+      <ToggleButtonGroup
+        color="primary"
+        value={filter}
+        exclusive
+        onChange={handleChange}
+        size="small"
+      >
+        <ToggleButton value="all">Vše</ToggleButton>
+        <ToggleButton value="buy">Koupit</ToggleButton>
+        <ToggleButton value="resolved">Vyřešeno</ToggleButton>
+      </ToggleButtonGroup>
     </div>
   );
 }
