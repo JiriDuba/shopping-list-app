@@ -13,10 +13,8 @@ export default function ShoppingListGrid({ lists, onDelete, onArchive }) {
 
   return (
     // Grid container drží položky pohromadě
-    // spacing={3} znamená mezeru 24px mezi dlaždicemi
     <Grid container spacing={3}>
       {lists.map(list => (
-        // Grid item je obal pro jednu dlaždici
         <Grid item key={list.id} xs={12} sm={6} md={4}>
           <ShoppingListTile
             list={list}

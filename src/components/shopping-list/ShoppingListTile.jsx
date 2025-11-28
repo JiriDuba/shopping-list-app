@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-// Importujeme MUI komponenty
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton'; // Tlačítko, které je jen ikona
+import IconButton from '@mui/material/IconButton'; 
 import DeleteIcon from '@mui/icons-material/Delete'; // Ikona koše
 import ArchiveIcon from '@mui/icons-material/Archive'; // Ikona archivu
 import UnarchiveIcon from '@mui/icons-material/Unarchive';

@@ -1,4 +1,3 @@
-// Stejná logika jako FilterButtons.jsx, jen jiné názvy hodnot
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 

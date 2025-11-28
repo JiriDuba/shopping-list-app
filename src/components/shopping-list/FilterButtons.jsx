@@ -1,4 +1,3 @@
-// Zde si všimni, že jsme smazali import původní Button komponenty
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 

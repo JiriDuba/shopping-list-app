@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-// MUI Importy
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -43,7 +42,11 @@ export default function ListTitleEditable({ list, onUpdate }) {
             autoFocus
             fullWidth
             variant="standard"
-            inputProps={{ style: { fontSize: '2rem', padding: '4px 0' } }}
+            slotProps={{
+              input: {
+                style: { fontSize: '2rem', padding: '4px 0' }
+              }
+            }}
           />
           <IconButton onClick={handleSave} color="primary" aria-label="uložit">
             <SaveIcon />

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import AddMemberModal from './AddMemberModal';
 import { useAuth } from '../../context/AuthContext';
-// MUI Importy
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
