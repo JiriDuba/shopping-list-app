@@ -12,12 +12,14 @@ const simulateDelay = (ms = 500) => new Promise(resolve => setTimeout(resolve, m
 
 // --- MOCK API IMPLEMENTACE ---
 const mockApi = {
-  // 1. Získání všech seznamů
+  // 1. Získání všech seznamů (UPRAVENO pro grafy)
   getLists: async () => {
     await simulateDelay();
-    // Simulace náhodné chyby (pro testování error stavu - odkomentuj pro vyzkoušení)
-    // if (Math.random() > 0.8) throw new Error("Chyba při komunikaci se serverem.");
-    return [...mockLists];
+    // Pro každý seznam spočítáme, kolik má v mockItems položek
+    return mockLists.map(list => ({
+      ...list,
+      itemsCount: mockItems.filter(item => item.listId === list.id).length
+    }));
   },
 
   // 2. Vytvoření seznamu

@@ -1,31 +1,53 @@
-import Button from '../common/Button';
 
-export default function ItemRow({ item, onToggle, onDelete }) {
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+
+export default function ItemRow({ item, onToggle, onDelete, divider }) {
+  
+
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      padding: '1rem',
-      background: '#fff',
-      borderRadius: '8px',
-      marginBottom: '0.5rem',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-    }}>
-      <input
-        type="checkbox"
+    <ListItem
+      divider={divider} // Přidá jemnou linku mezi položky
+      secondaryAction={
+        <IconButton 
+          edge="end" 
+          aria-label="delete" 
+          onClick={() => onDelete(item.id)}
+          color="error"
+        >
+          <DeleteIcon />
+        </IconButton>
+      }
+      sx={{
+        // Odstranili jsme fixní bílou - pozadí se nyní řídí nadřazeným prvkem (Paper v ItemsList)
+        transition: 'background-color 0.2s',
+        '&:hover': {
+          bgcolor: 'action.hover', // Jemné zvýraznění při najetí myší v obou módech
+        },
+      }}
+    >
+      <Checkbox
+        edge="start"
         checked={item.resolved}
+        tabIndex={-1}
+        disableRipple
         onChange={() => onToggle(item.id)}
-        style={{ marginRight: '1rem', transform: 'scale(1.5)' }}
       />
-      <span style={{
-        flex: 1,
-        textDecoration: item.resolved ? 'line-through' : 'none',
-        color: item.resolved ? '#888' : '#333',
-        fontSize: '1.1rem'
-      }}>
-        {item.title}
-      </span>
-      <Button variant="danger" onClick={() => onDelete(item.id)}>Del</Button>
-    </div>
+      <ListItemText
+        primary={item.title}
+        sx={{
+          textDecoration: item.resolved ? 'line-through' : 'none',
+          // Použití systémových barev textu
+          color: item.resolved ? 'text.disabled' : 'text.primary',
+          '& .MuiTypography-root': {
+            fontSize: '1.1rem',
+          },
+        }}
+      />
+    </ListItem>
   );
 }

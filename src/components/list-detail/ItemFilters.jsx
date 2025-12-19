@@ -1,26 +1,19 @@
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Button from '../common/Button';
+import { useTranslation } from 'react-i18next';
 
 export default function ItemFilters({ filter, setFilter }) {
-  const handleChange = (event, newFilter) => {
-    if (newFilter !== null) {
-      setFilter(newFilter);
-    }
-  };
-
+  const { t } = useTranslation();
   return (
-    <div style={{ margin: '1rem 0' }}>
-      <ToggleButtonGroup
-        color="primary"
-        value={filter}
-        exclusive
-        onChange={handleChange}
-        size="small"
-      >
-        <ToggleButton value="all">Vše</ToggleButton>
-        <ToggleButton value="buy">Koupit</ToggleButton>
-        <ToggleButton value="resolved">Vyřešeno</ToggleButton>
-      </ToggleButtonGroup>
+    <div style={{ margin: '1rem 0', display: 'flex', gap: '1rem' }}>
+      <Button variant={filter === 'all' ? 'primary' : ''} onClick={() => setFilter('all')}>
+        {t('all')}
+      </Button>
+      <Button variant={filter === 'buy' ? 'primary' : ''} onClick={() => setFilter('buy')}>
+        {t('buy')}
+      </Button>
+      <Button variant={filter === 'resolved' ? 'primary' : ''} onClick={() => setFilter('resolved')}>
+        {t('resolved')}
+      </Button>
     </div>
   );
 }

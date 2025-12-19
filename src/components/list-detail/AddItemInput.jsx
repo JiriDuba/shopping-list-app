@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // MUI Importy
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -7,6 +8,7 @@ import Box from '@mui/material/Box';
 
 export default function AddItemInput({ onAdd }) {
   const [title, setTitle] = useState('');
+  const { t } = useTranslation(); // Hook pro překlady
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && title.trim()) {
@@ -22,17 +24,21 @@ export default function AddItemInput({ onAdd }) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyPress}
-        placeholder="+ Přidat novou položku a stiskni Enter..."
+        // Použití překladového klíče pro placeholder
+        placeholder={t('placeholder_add')} 
         fullWidth
         variant="outlined"
         size="medium"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <AddCircleIcon color="primary" />
-            </InputAdornment>
-          ),
-          style: { borderRadius: '12px' }
+        // Nový způsob zápisu místo InputProps
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <AddCircleIcon color="primary" />
+              </InputAdornment>
+            ),
+            style: { borderRadius: '12px' }
+          }
         }}
       />
     </Box>
